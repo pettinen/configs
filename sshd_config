@@ -1,0 +1,21 @@
+AuthorizedKeysFile .ssh/authorized_keys
+Ciphers aes256-gcm@openssh.com
+ClientAliveCountMax 2
+ClientAliveInterval 10
+HostKey /etc/ssh/ssh_host_ed25519_key
+HostKeyAlgorithms ssh-ed25519
+KbdInteractiveAuthentication no
+KexAlgorithms curve25519-sha256
+LoginGraceTime 10
+MACs umac-128-etm@openssh.com
+PasswordAuthentication no
+PermitRootLogin no
+Port ...
+PrintMotd no
+PubkeyAcceptedAlgorithms ssh-ed25519
+Subsystem sftp internal-sftp
+
+Match Group sftp
+  ChrootDirectory ...
+  DisableForwarding yes
+  ForceCommand internal-sftp
