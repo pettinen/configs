@@ -138,7 +138,7 @@ function __prompt_command {
     __duration=" $__duration"
   done
   PS1+=$'\[\e[30;43m\] \UF051B $__duration '
-  [[ $return_code -ne 0 ]] && PS1+=$'\[\e[1;37;101m\] \U1F643'" $return_code "
+  [[ $return_code -ne 0 ]] && PS1+=$'\[\e[1;37;41m\] \U1F643'" $return_code "
   local battery_dir=/sys/class/power_supply/BAT
   if [[ -d ${battery_dir}0 ]]; then
     battery_dir=${battery_dir}0
