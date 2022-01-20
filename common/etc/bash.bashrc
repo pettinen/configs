@@ -154,11 +154,15 @@ function __prompt_command {
 }
 PROMPT_COMMAND=__prompt_command
 
-alias ls='ls --color=auto'
-
 alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 alias cpf=/usr/bin/cp
 alias mvf=/usr/bin/mv
 alias rmf=/usr/bin/rm
+
+alias ls='ls --color=auto'
+alias ll='ls -l'
+alias la='ls -Al'
+
+alias vi=vim
