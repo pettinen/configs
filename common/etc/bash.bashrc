@@ -161,6 +161,8 @@ alias cpf=/usr/bin/cp
 alias mvf=/usr/bin/mv
 alias rmf=/usr/bin/rm
 
+alias diff='diff --color'
+
 alias ls='ls --color=auto'
 alias ll='ls -l'
 alias la='ls -Al'
