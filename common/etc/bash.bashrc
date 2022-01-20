@@ -145,7 +145,7 @@ function __prompt_command {
   elif [[ -d ${battery_dir}1 ]]; then
     battery_dir=${battery_dir}1
   fi
-  if [[ $battery_dir ]]; then
+  if [[ -d $battery_dir ]]; then
     local battery_level=$(<$battery_dir/capacity)
     local battery_icon=$(__battery_icon "$(<$battery_dir/status)" "$battery_level")
     PS1+="\[\e[0;30;46m\] $battery_icon $battery_level% "
