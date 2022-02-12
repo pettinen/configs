@@ -88,7 +88,7 @@ function __prompt_command {
   local title_bar='\w'
   echo -en "\e]2;${title_bar@P}\a"
 
-  PS1='\[\e[30;103m\] \t \[\e[102m\] \u@\h '
+  PS1='\[\e[0;30;103m\] \t \[\e[102m\] \u@\h '
   local number_jobs=$(jobs | grep -Fcv Done)
   (( $number_jobs > 0 )) && PS1+=$'\[\e[103m\] \UF0AA2'" $number_jobs "
   PS1+='\[\e[97;104m\] \w \[\e[0;30m\]'

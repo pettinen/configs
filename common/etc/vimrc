@@ -1,25 +1,13 @@
-" All system-wide defaults are set in $VIMRUNTIME/archlinux.vim (usually just
-" /usr/share/vim/vimfiles/archlinux.vim) and sourced by the call to :runtime
-" you can find below.  If you wish to change any of those settings, you should
-" do it in this file (/etc/vimrc), since archlinux.vim will be overwritten
-" everytime an upgrade of the vim packages is performed.  It is recommended to
-" make changes after sourcing archlinux.vim since it alters the value of the
-" 'compatible' option.
-
-" This line should not be removed as it ensures that various options are
-" properly set to work with the Vim-related packages.
 runtime! archlinux.vim
 
-" If you prefer the old-style vim functionalty, add 'runtime! vimrc_example.vim'
-" Or better yet, read /usr/share/vim/vim80/vimrc_example.vim or the vim manual
-" and configure vim to your own liking!
+set expandtab
+set shiftwidth=4
+set softtabstop=-1
+set tabstop=4
 
-" do not load defaults if ~/.vimrc is missing
-"let skip_defaults_vim=1
-
-if &term =~'^screen'
-  execute "set <xUp>=\e[1;*A"
-  execute "set <xDown>=\e[1;*B"
-  execute "set <xRight>=\e[1;*C"
-  execute "set <xLeft>=\e[1;*D"
+if &term == 'screen'
+  execute "set <xUp>=\<Esc>[@;*A"
+  execute "set <xDown>=\<Esc>[@;*B"
+  execute "set <xRight>=\<Esc>[@;*C"
+  execute "set <xLeft>=\<Esc>[@;*D"
 endif
