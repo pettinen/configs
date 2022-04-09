@@ -239,6 +239,8 @@ def make():
         alias la='ls -A'
         alias ll='ls -Al'
 
+        alias as='sudo su'
+        alias R=reset
         alias vi=vim
     """)
 
@@ -247,6 +249,24 @@ def make():
         print_fmt("""
             export WHOME=$(wslpath 'C:/Users/I')
             export DESKTOP=$WHOME/Desktop
+
+            function cw {
+                local options=()
+                local paths=()
+                local end_of_options=false
+
+                for arg in "$@"; do
+                    if [[ $arg != -* || $end_of_options = true ]]; then
+                        end_of_options=true
+                        paths+=("$(wslpath "$arg")")
+                    elif [[ $arg = -- ]]; then
+                        end_of_options=true
+                    else
+                        options+=("$arg")
+                    fi
+                done
+                cd "${options[@]}" -- "${paths[@]}"
+            }
 
             function mpc {
                 "$(wslpath 'C:/Program Files/MPC-HC/mpc-hc64.exe')" "$(wslpath -w "$1")"
@@ -273,7 +293,6 @@ def make():
                         options+=("$arg")
                     fi
                 done
-
                 "$(wslpath 'C:/Program Files/mpv/mpv.com')" "${options[@]}" -- "${files[@]}"
             }
 
@@ -300,7 +319,6 @@ def make():
                         options+=("$arg")
                     fi
                 done
-
                 mpv "${options[@]}" -- "${videos[@]}"
             }
 
@@ -319,7 +337,6 @@ def make():
                         options+=("$arg")
                     fi
                 done
-
                 mpv --keep-open "${options[@]}" -- "ytdl://ytsearch10:${search_terms[*]}"
             }
 
