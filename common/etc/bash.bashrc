@@ -82,13 +82,24 @@ function __battery_icon {
   fi
 }
 
+function __col {
+  local _row col
+  IFS=';' read -sdR -p $'\e[6n' _row col
+  echo "${col#*[}"
+}
+
 function __prompt_command {
   local return_code=$?
   __timer_stop
   local title_bar='\w'
   echo -en "\e]2;${title_bar@P}\a"
 
-  PS1='\[\e[0;30;103m\] \t \[\e[102m\] \u@\h '
+  if [[ $(__col) = 1 ]]; then
+    PS1='\[\e[0m\]'
+  else
+    PS1='\n\[\e[0;37;41m\]'$' \u2936 '
+  fi
+  PS1+='\[\e[0;30;103m\] \t \[\e[102m\] \u@\h '
   local number_jobs=$(jobs | grep -Fcv Done)
   (( $number_jobs > 0 )) && PS1+=$'\[\e[103m\] \UF0AA2'" $number_jobs "
   PS1+='\[\e[97;104m\] \w \[\e[0;30m\]'
