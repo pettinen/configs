@@ -343,6 +343,10 @@ def make():
             function rr {
                 "$(wslpath 'C:/Program Files/rr/rr.exe')" "$@"
             }
+
+            function qr {
+                qrencode --type=UTF8i -- "$*"
+            }
     """)
 
 
