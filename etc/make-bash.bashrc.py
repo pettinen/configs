@@ -2,29 +2,6 @@ import os
 import textwrap
 
 
-class Config:
-    def __init__(self):
-        self._env_var_cache = {}
-
-    def _get_env_var(self, env_var):
-        if (cached := self._env_var_cache.get(env_var)) is not None:
-            return cached
-        value = env_var_to_bool(os.getenv(env_var))
-        self._env_var_cache[env_var] = value
-        return value
-
-    @property
-    def prompt_battery(self):
-        return self._get_env_var("LAPTOP")
-
-    @property
-    def wsl(self):
-        return self._get_env_var("WSL")
-
-
-config = Config()
-
-
 def env_var_to_bool(value):
     if not value:
         return False
@@ -34,6 +11,50 @@ def env_var_to_bool(value):
     if lowercase in {'0', 'f', 'false', 'n', 'no'}:
         return False
     raise ValueError(f"expected a boolean-ish string")
+
+
+class Config:
+    def __init__(self):
+        self._env_var_cache = {}
+
+    def _get_env_var(self, env_var, type_=None):
+        if (cached := self._env_var_cache.get(env_var)) is not None:
+            return cached
+        value = os.getenv(env_var)
+        converters = {
+            "bool": env_var_to_bool,
+        }
+        if type_ is not None:
+            value = converters[type_](value)
+
+        self._env_var_cache[env_var] = value
+        return value
+
+
+    @property
+    def battery(self):
+        return self._get_env_var("LAPTOP", "bool")
+
+    @property
+    def prompt(self):
+        if self._get_env_var("PROOT", "bool"):
+            return "$"
+        return r"\$"
+
+    @property
+    def user_hostname(self):
+        if self._get_env_var("PROOT", "bool"):
+            value = self._get_env_var("USER_HOSTNAME")
+            assert value and "'" not in value and "\\" not in value
+            return value
+        return r"\u@\h"
+
+    @property
+    def wsl(self):
+        return self._get_env_var("WSL", "bool")
+
+
+config = Config()
 
 
 def print_fmt(text, indent=0):
@@ -141,73 +162,89 @@ def make():
             local title_bar='\w'
             echo -en "\e]2;${title_bar@P}\a"
 
+            local no_newline_icon=$'\UF17A5'
             if [[ $(__col) = 1 ]]; then
                 PS1='\[\e[0m\]'
             else
-                PS1='\[\e[0;37;41m\]'$' \u2936'' \[\e[0m\]\n'
+                PS1="\[\e[0;37;41m\] $no_newline_icon \[\e[0m\]\n"
             fi
 
             while (( ${#__timer_duration} < 6 )); do
                 __timer_duration=" $__timer_duration"
             done
 
-            PS1+='\[\e[30;43m\] '$'\UF051B'" $__timer_duration \[\e[102m\] \u@\h "
-
-            local number_jobs=$(jobs | grep -Fcv Done)
-            (( $number_jobs > 0 )) && PS1+='\[\e[103m\] '$'\UF0AA2'" $number_jobs "
-            PS1+='\[\e[97;104m\] \w \[\e[0;30m\]'
-            [[ $VIRTUAL_ENV ]] && PS1+='\[\e[105m\] \[\e[30m\]'$'\UF150E '
-
-            local git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-            if [[ $git_branch ]]; then
-                local git_bg
-                if [[ $(git status --porcelain 2> /dev/null) ]]; then
-                    git_bg='\[\e[103m\]'
-                else
-                    git_bg='\[\e[102m\]'
-                fi
-                PS1+="$git_bg "$'\UF062C'" $git_branch "
-
-                local ahead_behind=$(git rev-list --count --left-right '@{upstream}...HEAD' 2> /dev/null)
-                local number_ahead=$(cut -f2 <<< "$ahead_behind")
-                local number_behind=$(cut -f1 <<< "$ahead_behind")
-                if [[ $number_ahead -ne 0 ]]; then
-                    git_bg=$(__next_git_bg "$git_bg")
-                    PS1+="$git_bg "$'\UF005D'" $number_ahead "
-                fi
-                if [[ $number_behind -ne 0 ]]; then
-                    git_bg=$(__next_git_bg "$git_bg")
-                    PS1+="$git_bg "$'\UF0045'" $number_behind "
-                fi
-                local number_conflicts=$(git diff --name-only --diff-filter=U 2> /dev/null | wc -l)
-                if [[ $number_conflicts -ne 0 ]]; then
-                    git_bg=$(__next_git_bg "$git_bg")
-                    PS1+="$git_bg \[\e[31m\]"$'\UF0029'"\[\e[30m\] $number_conflicts "
-                fi
-                local number_staged=$(git diff --staged --name-only --diff-filter=AM 2>/dev/null | wc -l)
-                if [[ $number_staged -ne 0 ]]; then
-                    git_bg=$(__next_git_bg "$git_bg")
-                    PS1+="$git_bg "$'\UF012C'" $number_staged "
-                fi
-                local number_modified=$(git diff --name-only --diff-filter=M 2> /dev/null | wc -l)
-                if [[ $number_modified -ne 0 ]]; then
-                    git_bg=$(__next_git_bg "$git_bg")
-                    PS1+="$git_bg "$'\UF03EB'" $number_modified "
-                fi
-                local number_untracked=$(git ls-files --other --exclude-standard 2> /dev/null | wc -l)
-                if [[ $number_untracked -ne 0 ]]; then
-                    git_bg=$(__next_git_bg "$git_bg")
-                    PS1+="$git_bg "$'\UF0415'" $number_untracked "
-                fi
-            fi
-
-            PS1+='\[\e[0m\]\n\[\e[30;103m\] \t '
-
-            [[ $return_code -ne 0 ]] && PS1+='\[\e[1;37;41m\] '$'\U1F643'" $return_code "
-
+            local timer_icon=$'\UF051B'
+            PS1+="\[\e[30;43m\] $timer_icon $__timer_duration "
     """)
 
-    if config.prompt_battery:
+    print_fmt(fr"""
+            PS1+='\[\e[102m\] {config.user_hostname} '
+    """, 4)
+
+    print_fmt(r"""
+        local jobs_icon=$'\UF0AA2'
+        local number_jobs=$(jobs | grep -Fcv Done)
+        (( $number_jobs > 0 )) && PS1+="\[\e[103m\] $jobs_icon $number_jobs "
+        PS1+='\[\e[97;104m\] \w \[\e[0;30m\]'
+
+        local virtual_env_icon=$'\UF150E'
+        [[ $VIRTUAL_ENV ]] && PS1+="\[\e[105m\] \[\e[30m\]$virtual_env_icon "
+
+        local git_branch_icon=$'\UF062C'
+        local git_conflict_icon=$'\UF11CF'
+        local git_ahead_behind_icon=$'\UF0E79'
+        local git_ahead_icon=$'\UF005D'
+        local git_behind_icon=$'\UF0045'
+        local git_staged_icon=$'\UF012C'
+        local git_untracked_icon=$'\UF1A9E'
+
+        local git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+        local git_number_conflicts=$(git diff --name-only --diff-filter=U 2> /dev/null | wc -l)
+        local git_ahead_behind=$(git rev-list --count --left-right '@{upstream}...HEAD' 2> /dev/null)
+        local git_number_ahead=$(cut -f2 <<< $ahead_behind)
+        local git_number_behind=$(cut -f1 <<< $ahead_behind)
+        local git_number_modified=$(git diff --name-only --diff-filter=M 2> /dev/null | wc -l)
+        local git_number_staged=$(git diff --staged --name-only --diff-filter=AM 2>/dev/null | wc -l)
+        local git_number_untracked=$(git ls-files --other --exclude-standard 2> /dev/null | wc -l)
+
+
+        if [[ $git_branch ]]; then
+            local git_color
+            local git_symbols
+
+            if [[ $git_number_conflicts -gt 0 ]]; then
+                git_color='\[\e[30;101m\]'
+                git_symbols+=" $git_conflict_icon"
+            fi
+
+            if [[ $git_number_ahead -gt 0 && $git_number_behind -gt 0 ]]; then
+                git_color=${git_color:-'\[\e[30;105m\]'}
+                git_symbols+=" $git_ahead_behind_icon"
+            elif [[ $git_number_ahead -gt 0 ]]; then
+                git_symbols+=" $git_ahead_icon"
+            elif [[ $git_number_behind -gt 0 ]]; then
+                git_color=${git_color:-'\[\e[37;44m\]'}
+                git_symbols+=" $git_behind_icon"
+            fi
+
+            [[ $git_number_staged -gt 0 ]] && git_symbols+=" $git_staged_icon"
+            [[ $git_number_untracked -gt 0 ]] && git_symbols+=" $git_untracked_icon"
+            [[ $git_number_modified -gt 0 ]] && git_color=${git_color:-'\[\e[30;103m\]'}
+            git_color=${git_color:-'\[\e[30;102m\]'}
+
+            PS1+="$git_color $git_branch_icon $git_branch"
+            [[ $git_number_modified -gt 0 ]] && PS1+='*'
+            PS1+="$git_symbols "
+        fi
+
+        PS1+='\[\e[0m\]\n\[\e[30;103m\] \t '
+
+        local nonzero_return_icon=$'\U1F643'
+        [[ $return_code -ne 0 ]] && PS1+="\[\e[1;37;41m\] $nonzero_return_icon $return_code "
+
+    """, 4)
+
+    if config.battery:
         print_fmt(r"""
             local battery_dir=/sys/class/power_supply/BAT
             if [[ -d ${battery_dir}0 ]]; then
@@ -223,8 +260,10 @@ def make():
 
         """, 4)
 
+    print_fmt(fr"""
+        PS1+='\[\e[0;1m\] {config.prompt} \[\e[0m\]'
+    """, 4)
     print_fmt(r"""
-            PS1+='\[\e[0;1m\] \$ \[\e[0m\]'
         }
         PROMPT_COMMAND=__prompt_command
 
