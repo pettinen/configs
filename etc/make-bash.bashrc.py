@@ -68,6 +68,8 @@ def make():
     print_fmt(r"""
         [[ $- = *i* ]] || return 0
 
+        shopt -s direxpand dotglob
+
         function append_path {
             case ":$PATH:" in
                 *:"$1":*)
