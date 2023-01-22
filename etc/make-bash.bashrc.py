@@ -92,15 +92,15 @@ def make():
             local s=$(((delta_us / 1000000) % 60))
             local m=$(((delta_us / 60000000) % 60))
             local h=$((delta_us / 3600000000))
-            if ((h > 0)); then __duration=${h}h${m}m
-            elif ((m > 0)); then __duration=${m}m${s}s
-            elif ((s >= 10)); then __duration=${s}.$((ms / 100))s
-            elif ((s > 0)); then __duration=${s}.$(printf %03d $ms)s
-            elif ((ms >= 100)); then __duration=${ms}ms
-            elif ((ms > 0)); then __duration=${ms}.$((us / 100))ms
-            else __duration=${us}us
+            if ((h > 0)); then __timer_duration=${h}h${m}m
+            elif ((m > 0)); then __timer_duration=${m}m${s}s
+            elif ((s >= 10)); then __timer_duration=${s}.$((ms / 100))s
+            elif ((s > 0)); then __timer_duration=${s}.$(printf %03d $ms)s
+            elif ((ms >= 100)); then __timer_duration=${ms}ms
+            elif ((ms > 0)); then __timer_duration=${ms}.$((us / 100))ms
+            else __timer_duration=${us}us
             fi
-            unset __timer_start
+            unset -v __timer_start
         }
 
         function __next_git_bg {
@@ -144,13 +144,19 @@ def make():
             if [[ $(__col) = 1 ]]; then
                 PS1='\[\e[0m\]'
             else
-                PS1='\n\[\e[0;37;41m\]'$' \u2936 '
+                PS1='\[\e[0;37;41m\]'$' \u2936'' \[\e[0m\]\n'
             fi
-            PS1+='\[\e[0;30;103m\] \t \[\e[102m\] \u@\h '
+
+            while (( ${#__timer_duration} < 6 )); do
+                __timer_duration=" $__timer_duration"
+            done
+
+            PS1+='\[\e[30;43m\] '$'\UF051B'" $__timer_duration \[\e[102m\] \u@\h "
+
             local number_jobs=$(jobs | grep -Fcv Done)
-            (( $number_jobs > 0 )) && PS1+=$'\[\e[103m\] \UF0AA2'" $number_jobs "
+            (( $number_jobs > 0 )) && PS1+='\[\e[103m\] '$'\UF0AA2'" $number_jobs "
             PS1+='\[\e[97;104m\] \w \[\e[0;30m\]'
-            [[ $VIRTUAL_ENV ]] && PS1+=$'\[\e[105m\] \[\e[30m\]\UF150E '
+            [[ $VIRTUAL_ENV ]] && PS1+='\[\e[105m\] \[\e[30m\]'$'\UF150E '
 
             local git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
             if [[ $git_branch ]]; then
@@ -195,13 +201,9 @@ def make():
                 fi
             fi
 
-            PS1+='\[\e[0m\]\n'
-            while (( $(wc -c <<< "$__duration") < 7 )); do
-                __duration=" $__duration"
-            done
-            PS1+=$'\[\e[30;43m\] \UF051B $__duration '
+            PS1+='\[\e[0m\]\n\[\e[30;103m\] \t '
 
-            [[ $return_code -ne 0 ]] && PS1+=$'\[\e[1;37;41m\] \U1F643'" $return_code "
+            [[ $return_code -ne 0 ]] && PS1+='\[\e[1;37;41m\] '$'\U1F643'" $return_code "
 
     """)
 
