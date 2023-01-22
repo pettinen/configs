@@ -88,8 +88,11 @@ def make():
 
         prepend_path "$HOME/.local/bin"
 
-        shopt -s histappend
-        HISTCONTROL=ignoreboth
+        export HISTCONTROL=ignoreboth
+        export HISTFILE=~/.bash_full_history
+        export HISTFILESIZE=
+        export HISTSIZE=
+        export HISTTIMEFORMAT='[%F %T] '
 
         export EDITOR=vim
 
@@ -124,24 +127,31 @@ def make():
             unset -v __timer_start
         }
 
-        function __battery_icon {
-            if [[ $1 = Discharging ]]; then
-                if (( $2 >= 90 )); then echo $'\UF0079'
-                elif (( $2 >= 80 )); then echo $'\UF0082'
-                elif (( $2 >= 70 )); then echo $'\UF0081'
-                elif (( $2 >= 60 )); then echo $'\UF0080'
-                elif (( $2 >= 50 )); then echo $'\UF007F'
-                elif (( $2 >= 40 )); then echo $'\UF007E'
-                elif (( $2 >= 30 )); then echo $'\UF007D'
-                elif (( $2 >= 20 )); then echo $'\UF007C'
-                elif (( $2 >= 10 )); then echo $'\UF007B'
-                else echo $'\UF007A'
-                fi
-            else
-                echo $'\UF140B'
-            fi
-        }
+    """)
 
+    if config.battery:
+        print_fmt(r"""
+            function __battery_icon {
+                if [[ $1 = Discharging ]]; then
+                    if (( $2 >= 90 )); then echo $'\UF0079'
+                    elif (( $2 >= 80 )); then echo $'\UF0082'
+                    elif (( $2 >= 70 )); then echo $'\UF0081'
+                    elif (( $2 >= 60 )); then echo $'\UF0080'
+                    elif (( $2 >= 50 )); then echo $'\UF007F'
+                    elif (( $2 >= 40 )); then echo $'\UF007E'
+                    elif (( $2 >= 30 )); then echo $'\UF007D'
+                    elif (( $2 >= 20 )); then echo $'\UF007C'
+                    elif (( $2 >= 10 )); then echo $'\UF007B'
+                    else echo $'\UF007A'
+                    fi
+                else
+                    echo $'\UF140B'
+                fi
+            }
+
+        """)
+
+    print_fmt(r"""
         function __col {
             local _row col
             IFS=';' read -sdR -p $'\e[6n' _row col
@@ -151,6 +161,7 @@ def make():
         function __prompt_command {
             local return_code=$?
             __timer_stop
+            history -a
             local title_bar='\w'
             echo -en "\e]2;${title_bar@P}\a"
 
