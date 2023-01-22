@@ -199,16 +199,16 @@ def make():
         local git_untracked_icon=$'\UF1A9E'
 
         local git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-        local git_number_conflicts=$(git diff --name-only --diff-filter=U 2> /dev/null | wc -l)
-        local git_ahead_behind=$(git rev-list --count --left-right '@{upstream}...HEAD' 2> /dev/null)
-        local git_number_ahead=$(cut -f2 <<< $ahead_behind)
-        local git_number_behind=$(cut -f1 <<< $ahead_behind)
-        local git_number_modified=$(git diff --name-only --diff-filter=M 2> /dev/null | wc -l)
-        local git_number_staged=$(git diff --staged --name-only --diff-filter=AM 2>/dev/null | wc -l)
-        local git_number_untracked=$(git ls-files --other --exclude-standard 2> /dev/null | wc -l)
-
 
         if [[ $git_branch ]]; then
+            local git_number_conflicts=$(git diff --name-only --diff-filter=U 2> /dev/null | wc -l)
+            local git_ahead_behind=$(git rev-list --count --left-right '@{upstream}...HEAD' 2> /dev/null)
+            local git_number_ahead=$(cut -f2 <<< $ahead_behind)
+            local git_number_behind=$(cut -f1 <<< $ahead_behind)
+            local git_number_modified=$(git diff --name-only --diff-filter=M 2> /dev/null | wc -l)
+            local git_number_staged=$(git diff --staged --name-only --diff-filter=AM 2>/dev/null | wc -l)
+            local git_number_untracked=$(git ls-files --other --exclude-standard 2> /dev/null | wc -l)
+
             local git_color
             local git_symbols
 
