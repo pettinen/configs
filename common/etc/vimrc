@@ -4,10 +4,3 @@ set expandtab
 set shiftwidth=4
 set softtabstop=-1
 set tabstop=4
-
-if &term == 'tmux-256color'
-  execute "set <xUp>=\<Esc>[@;*A"
-  execute "set <xDown>=\<Esc>[@;*B"
-  execute "set <xRight>=\<Esc>[@;*C"
-  execute "set <xLeft>=\<Esc>[@;*D"
-endif

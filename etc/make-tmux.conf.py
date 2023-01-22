@@ -54,10 +54,6 @@ def make():
             set-option -g prefix C-s
         """)
 
-    print_fmt("""
-        set-window-option -g xterm-keys on
-    """)
-
 
 if __name__ == "__main__":
     make()
