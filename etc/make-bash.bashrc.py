@@ -124,14 +124,6 @@ def make():
             unset -v __timer_start
         }
 
-        function __next_git_bg {
-            if [[ $1 = '\[\e[43m\]' ]]; then echo '\[\e[103m\]'
-            elif [[ $1 = '\[\e[103m\]' ]]; then echo '\[\e[43m\]'
-            elif [[ $1 = '\[\e[42m\]' ]]; then echo '\[\e[102m\]'
-            elif [[ $1 = '\[\e[102m\]' ]]; then echo '\[\e[42m\]'
-            fi
-        }
-
         function __battery_icon {
             if [[ $1 = Discharging ]]; then
                 if (( $2 >= 90 )); then echo $'\UF0079'
