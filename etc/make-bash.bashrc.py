@@ -190,7 +190,7 @@ def make():
         local jobs_icon=$'\UF0AA2'
         local number_jobs=$(jobs | grep -Fcv Done)
         (( $number_jobs > 0 )) && PS1+="\[\e[103m\] $jobs_icon $number_jobs "
-        PS1+='\[\e[97;104m\] \w \[\e[0;30m\]'
+        PS1+='\[\e[105m\] \w \[\e[30m\]'
 
         local virtual_env_icon=$'\UF150E'
         [[ $VIRTUAL_ENV ]] && PS1+="\[\e[105m\] \[\e[30m\]$virtual_env_icon "
