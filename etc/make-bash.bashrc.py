@@ -281,9 +281,9 @@ def make():
 
         alias diff='diff --color'
 
-        alias ls='ls --color=auto'
-        alias la='ls -A'
-        alias ll='ls -Al'
+        alias ls=exa
+        alias la='exa --all'
+        alias ll='exa --all --long'
 
         alias as='sudo su'
         alias R=reset
