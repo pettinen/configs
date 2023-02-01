@@ -283,7 +283,7 @@ def make():
 
         alias ls=exa
         alias la='exa --all'
-        alias ll='exa --all --long'
+        alias ll='exa --all --long --group'
 
         alias as='sudo su'
         alias R=reset
