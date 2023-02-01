@@ -13,7 +13,13 @@ DATE=2023-01-01
 DAYS=365
 TODAY=$(date --iso-8601=date)
 
-EXTENSIONS="subjectAltName = DNS:$1"
+EXTENSIONS="\
+basicConstraints = critical, CA:FALSE
+extendedKeyUsage = critical, serverAuth
+keyUsage = critical, digitalSignature, keyEncipherment
+subjectAltName = critical, DNS:$1
+subjectKeyIdentifier = hash
+"
 
 REQ_CONFIG="\
 [ req ]

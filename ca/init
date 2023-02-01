@@ -27,4 +27,8 @@ CN = $1
 openssl genrsa -out ca.key 4096
 
 faketime "$DATE"Z \
-    openssl req -new -x509 -config <(echo "$REQ") -days "$DAYS" -key ca.key -out ca.crt
+    openssl req -new -x509 -config <(echo "$REQ") \
+        -addext 'basicConstraints = critical, CA:TRUE' \
+        -addext 'keyUsage = critical, keyCertSign' \
+        -addext 'subjectKeyIdentifier = hash' \
+        -days "$DAYS" -key ca.key -out ca.crt
