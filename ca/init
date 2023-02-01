@@ -26,5 +26,5 @@ CN = $1
 
 openssl genrsa -out ca.key 4096
 
-faketime "@$(date --date="$DATE" --utc +%s)" \
+faketime "$DATE"Z \
     openssl req -new -x509 -config <(echo "$REQ") -days "$DAYS" -key ca.key -out ca.crt

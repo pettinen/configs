@@ -33,7 +33,7 @@ openssl genrsa -out "out/$1.$TODAY.key" 4096
 
 REQ=$(openssl req -new -config <(echo "$REQ_CONFIG") -key "out/$1.$TODAY.key")
 
-faketime "@$(date --date="$DATE" --utc +%s)" \
+faketime "$DATE"Z \
     openssl ca -batch -config ca.conf -extfile <(echo "$EXTENSIONS") -days "$DAYS" \
         -in <(echo "$REQ") -out "out/$1.$TODAY.crt"
 
