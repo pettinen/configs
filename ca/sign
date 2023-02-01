@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [[ -z $1 ]]; then
+    echo "Usage: $(basename "$0") DOMAIN" >&2
+    exit 1
+fi
+
+cd "$(dirname "$0")"
+
+DATE=2023-01-01
+DAYS=365
+TODAY=$(date --iso-8601=date)
+
+EXTENSIONS="subjectAltName = DNS:$1"
+
+REQ_CONFIG="\
+[ req ]
+distinguished_name = dn
+prompt = no
+req_extensions = extensions
+utf8 = yes
+
+[ dn ]
+CN = $1
+
+[ extensions ]
+$EXTENSIONS
+"
+
+openssl genrsa -out "out/$1.$TODAY.key" 4096
+
+REQ=$(openssl req -new -config <(echo "$REQ_CONFIG") -key "out/$1.$TODAY.key")
+
+faketime "@$(date --date="$DATE" --utc +%s)" \
+    openssl ca -batch -config ca.conf -extfile <(echo "$EXTENSIONS") -days "$DAYS" \
+        -in <(echo "$REQ") -out "out/$1.$TODAY.crt"
+
+CERT_START_LINE=$(
+    grep --line-number -- '-----BEGIN CERTIFICATE-----' "out/$1.$TODAY.crt" |
+        cut --delimiter=':' --fields=1
+)
+
+cat <(tail --lines=+"$CERT_START_LINE" "out/$1.$TODAY.crt") ca.crt \
+    > "out/$1.$TODAY.fullchain.crt"
+
+mv "out/$1.$TODAY.fullchain.crt" "out/$1.$TODAY.crt"

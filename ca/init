@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -e
+
+if [[ -z $1 ]]; then
+    echo "Usage: $(basename "$0") COMMON_NAME" >&2
+    exit 1
+fi
+
+cd "$(dirname "$0")"
+
+DATE=2022-01-01
+DAYS=7305
+
+touch index.txt
+echo 00 > serial
+
+REQ="\
+[ req ]
+distinguished_name = dn
+prompt = no
+
+[ dn ]
+CN = $1
+"
+
+openssl genrsa -out ca.key 4096
+
+faketime "@$(date --date="$DATE" --utc +%s)" \
+    openssl req -new -x509 -config <(echo "$REQ") -days "$DAYS" -key ca.key -out ca.crt

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+cd "$(dirname "$0")"
+
+rm -f \
+    certs/*.pem \
+    index.txt \
+    index.txt.attr \
+    index.txt.attr.old \
+    index.txt.old \
+    out/*.key \
+    out/*.crt \
+    out/*.csr \
+    serial \
+    serial.old
+
+touch index.txt
+echo 00 > serial
