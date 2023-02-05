@@ -4,8 +4,8 @@ import json
 import sys
 
 
-BLACK = 20, 20, 20
-BRIGHT_BLACK = 38, 38, 38
+BLACK = 64, 64, 64
+BRIGHT_BLACK = 96, 96, 96
 RED = 192, 109, 68
 BRIGHT_RED = 222, 124, 76
 GREEN = 175, 185, 122
