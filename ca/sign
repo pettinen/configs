@@ -9,8 +9,9 @@ fi
 
 cd "$(dirname "$0")"
 
-DATE=2023-01-01
-DAYS=365
+CURRENT_YEAR=$(date +%Y)
+DATE=$CURRENT_YEAR-01-01
+DAYS=$(python -c "import calendar; print(365 + calendar.isleap($CURRENT_YEAR))")
 TODAY=$(date --iso-8601=date)
 
 EXTENSIONS="\
