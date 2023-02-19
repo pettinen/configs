@@ -285,8 +285,8 @@ def make():
         alias la='exa --all'
         alias ll='exa --all --long --group'
 
-        alias as='sudo su'
         alias R=reset
+        alias sud='sudo su'
         alias vi=vim
     """)
 
