@@ -4,6 +4,10 @@ import json
 import sys
 
 
+BACKGROUND = 20, 20, 20
+FOREGROUND = 255, 255, 212
+CURSOR = FOREGROUND
+
 BLACK = 64, 64, 64
 BRIGHT_BLACK = 96, 96, 96
 RED = 192, 109, 68
@@ -18,7 +22,7 @@ MAGENTA = 164, 124, 190
 BRIGHT_MAGENTA = 177, 142, 199
 CYAN = 119, 131, 133
 BRIGHT_CYAN = 138, 152, 155
-WHITE = 255, 255, 212
+WHITE = FOREGROUND
 BRIGHT_WHITE = 255, 255, 255
 
 
@@ -28,9 +32,9 @@ def hex_color(r, g, b):
 
 def mintty():
     colors = {
-        "BackgroundColour": BLACK,
-        "ForegroundColour": WHITE,
-        "CursorColour": WHITE,
+        "BackgroundColour": BACKGROUND,
+        "ForegroundColour": FOREGROUND,
+        "CursorColour": CURSOR,
         "Black": BLACK,
         "Red": RED,
         "Green": GREEN,
@@ -71,8 +75,8 @@ def termux():
         14: BRIGHT_CYAN,
         15: BRIGHT_WHITE,
     }
-    print(f"background: {hex_color(*BLACK)}")
-    print(f"foreground: {hex_color(*WHITE)}")
+    print(f"background: {hex_color(*BACKGROUND)}")
+    print(f"foreground: {hex_color(*FOREGROUND)}")
     for index, rgb in colors.items():
         print(f"color{index}: {hex_color(*rgb)}")
 
@@ -100,8 +104,8 @@ def vscode():
     outer_dict = {
         "workbench.colorCustomizations": inner_dict
     }
-    inner_dict["terminal.background"] = hex_color(*BLACK)
-    inner_dict["terminal.foreground"] = hex_color(*WHITE)
+    inner_dict["terminal.background"] = hex_color(*BACKGROUND)
+    inner_dict["terminal.foreground"] = hex_color(*FOREGROUND)
     for name, rgb in colors.items():
         inner_dict[f"terminal.ansi{name}"] = hex_color(*rgb)
     print(json.dumps(outer_dict, indent=4))
