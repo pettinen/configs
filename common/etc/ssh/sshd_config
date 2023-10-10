@@ -5,7 +5,7 @@ ClientAliveInterval 10
 HostKey /etc/ssh/ssh_host_ed25519_key
 HostKeyAlgorithms ssh-ed25519
 KbdInteractiveAuthentication no
-KexAlgorithms curve25519-sha256
+KexAlgorithms sntrup761x25519-sha512@openssh.com
 LoginGraceTime 10
 MACs umac-128-etm@openssh.com
 PasswordAuthentication no
@@ -16,6 +16,9 @@ PubkeyAcceptedAlgorithms ssh-ed25519
 Subsystem sftp internal-sftp
 
 Match Group sftp
-  ChrootDirectory ...
-  DisableForwarding yes
-  ForceCommand internal-sftp
+    ChrootDirectory ...
+    DisableForwarding yes
+    ForceCommand internal-sftp
+
+Match Group allow-rsa-pubkey
+    PubkeyAcceptedAlgorithms +rsa-sha2-512

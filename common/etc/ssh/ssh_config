@@ -1,0 +1,9 @@
+Host github.com
+    KexAlgorithms sntrup761x25519-sha512@openssh.com,curve25519-sha256
+    User git
+
+Match all
+    Ciphers aes256-gcm@openssh.com
+    HostKeyAlgorithms ssh-ed25519
+    KexAlgorithms sntrup761x25519-sha512@openssh.com
+    MACs umac-128-etm@openssh.com
