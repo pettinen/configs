@@ -328,7 +328,7 @@ def make():
                         end_of_options=true
                         local winpath
                         winpath=$(wslpath -w $arg 2> /dev/null)
-                        if [[ $? -eq 0 ]]; then
+                        if [[ $? -eq 0 && -e $winpath ]]; then
                             files+=("$winpath")
                         else
                             files+=("$arg")
