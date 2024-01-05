@@ -70,16 +70,24 @@ def make():
 
         shopt -s direxpand dotglob
 
-        function append_path {
-            case ":$PATH:" in
-                *:"$1":*)
-                    ;;
-                *)
-                    PATH=${PATH:+$PATH:}$1
-            esac
-        }
-
         function prepend_path {
+            local usage="Usage: ${FUNCNAME[0]} <PATH>"
+            if [[ $1 = -h || $1 = --help ]]; then
+                echo "$usage"
+                return 0
+            fi
+            if [[ $# != 1 || -z $1 ]]; then
+                echo "$usage" >&2
+                return 1
+            fi
+            if [[ $1 != /* ]]; then
+                echo 'error: the path must be absolute' >&2
+                return 1
+            fi
+            if [[ $1 == *:* ]]; then
+                echo 'error: the path cannot contain a colon' >&2
+                return 1
+            fi
             case ":$PATH:" in
                 *:"$1":*)
                     ;;
