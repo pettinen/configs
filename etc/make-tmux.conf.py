@@ -42,6 +42,7 @@ def print_fmt(text, indent=0):
 def make():
     print_fmt("""
         unbind-key C-b
+        set-option -g history-limit 100000
     """)
 
     if config.server:
