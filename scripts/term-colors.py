@@ -4,11 +4,11 @@ import json
 import sys
 
 
-BACKGROUND = 20, 20, 20
+BACKGROUND = 0, 0, 0
 FOREGROUND = 255, 255, 212
 CURSOR = FOREGROUND
 
-BLACK = 64, 64, 64
+BLACK = 24, 24, 24
 BRIGHT_BLACK = 96, 96, 96
 RED = 192, 109, 68
 BRIGHT_RED = 222, 124, 76
@@ -28,6 +28,41 @@ BRIGHT_WHITE = 255, 255, 255
 
 def hex_color(r, g, b):
     return f"#{r:x}{g:x}{b:x}"
+
+
+def alacritty():
+    normal = {
+        "black": BLACK,
+        "blue": BLUE,
+        "cyan": CYAN,
+        "green": GREEN,
+        "magenta": MAGENTA,
+        "red": RED,
+        "white": WHITE,
+        "yellow": YELLOW,
+    }
+    bright = {
+        "black": BRIGHT_BLACK,
+        "blue": BRIGHT_BLUE,
+        "cyan": BRIGHT_CYAN,
+        "green": BRIGHT_GREEN,
+        "magenta": BRIGHT_MAGENTA,
+        "red": BRIGHT_RED,
+        "white": BRIGHT_WHITE,
+        "yellow": BRIGHT_YELLOW,
+    }
+
+    print("[colors.normal]")
+    for color, rgb in normal.items():
+        print(f'{color} = "{hex_color(*rgb)}"')
+
+    print("\n[colors.bright]")
+    for color, rgb in bright.items():
+        print(f'{color} = "{hex_color(*rgb)}"')
+
+    print("\n[colors.primary]")
+    print(f'background = "{hex_color(*BACKGROUND)}"')
+    print(f'foreground = "{hex_color(*FOREGROUND)}"')
 
 
 def mintty():
@@ -114,13 +149,15 @@ def vscode():
 if __name__ == "__main__":
     def invalid_args():
         name = sys.argv[0] or "term-colors.py"
-        print(f"Usage: {name} {{ mintty | termux | vscode }}", file=sys.stderr)
+        print(f"Usage: {name} {{ alacritty | mintty | termux | vscode }}", file=sys.stderr)
         sys.exit(2)
 
     if len(sys.argv) < 2:
         invalid_args()
     arg = sys.argv[1]
-    if arg == "mintty":
+    if arg == "alacritty":
+        alacritty()
+    elif arg == "mintty":
         mintty()
     elif arg == "termux":
         termux()
