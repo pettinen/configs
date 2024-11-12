@@ -180,7 +180,7 @@ def make():
             done
 
             local timer_icon=$'\uE100'
-            PS1+="\[\e[38;2;0;0;0;43m\] $timer_icon $__timer_duration "
+            PS1+="\[\e[30;43m\] $timer_icon $__timer_duration "
     """)
 
     print_fmt(fr"""
@@ -191,10 +191,10 @@ def make():
         local jobs_icon=$'\uE103'
         local number_jobs=$(jobs | grep -Fcv Done)
         (( $number_jobs > 0 )) && PS1+="\[\e[103m\] $jobs_icon $number_jobs "
-        PS1+='\[\e[105m\] \w \[\e[38;2;0;0;0m\]'
+        PS1+='\[\e[105m\] \w \[\e[30m\]'
 
         local virtual_env_icon=$'\uE104'
-        [[ $VIRTUAL_ENV ]] && PS1+="\[\e[105m\] \[\e[38;2;0;0;0m\]$virtual_env_icon "
+        [[ $VIRTUAL_ENV ]] && PS1+="\[\e[105m\] \[\e[30m\]$virtual_env_icon "
 
         local git_branch_icon=$'\uE105'
         local git_conflict_icon=$'\uE102'
@@ -219,12 +219,12 @@ def make():
             local git_symbols
 
             if [[ $git_number_conflicts -gt 0 ]]; then
-                git_color='\[\e[38;2;0;0;0;101m\]'
+                git_color='\[\e[30;101m\]'
                 git_symbols+=" $git_conflict_icon"
             fi
 
             if [[ $git_number_ahead -gt 0 && $git_number_behind -gt 0 ]]; then
-                git_color=${git_color:-'\[\e[38;2;0;0;0;105m\]'}
+                git_color=${git_color:-'\[\e[30;105m\]'}
                 git_symbols+=" $git_ahead_behind_icon"
             elif [[ $git_number_ahead -gt 0 ]]; then
                 git_symbols+=" $git_ahead_icon"
@@ -235,15 +235,15 @@ def make():
 
             [[ $git_number_staged -gt 0 ]] && git_symbols+=" $git_staged_icon"
             [[ $git_number_untracked -gt 0 ]] && git_symbols+=" $git_untracked_icon"
-            [[ $git_number_modified -gt 0 ]] && git_color=${git_color:-'\[\e[38;2;0;0;0;103m\]'}
-            git_color=${git_color:-'\[\e[38;2;0;0;0;102m\]'}
+            [[ $git_number_modified -gt 0 ]] && git_color=${git_color:-'\[\e[30;103m\]'}
+            git_color=${git_color:-'\[\e[30;102m\]'}
 
             PS1+="$git_color $git_branch_icon $git_branch"
             [[ $git_number_modified -gt 0 ]] && PS1+='*'
             PS1+="$git_symbols "
         fi
 
-        PS1+='\[\e[0m\]\n\[\e[38;2;0;0;0;103m\] \t '
+        PS1+='\[\e[0m\]\n\[\e[30;103m\] \t '
 
         local nonzero_return_icon=$'\uE102'
         [[ $return_code -ne 0 ]] && PS1+="\[\e[1;37;41m\] $nonzero_return_icon $return_code "

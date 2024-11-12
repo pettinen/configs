@@ -4,11 +4,11 @@ import json
 import sys
 
 
-BACKGROUND = 0, 0, 0
+BACKGROUND = 24, 24, 24
 FOREGROUND = 255, 255, 212
 CURSOR = FOREGROUND
 
-BLACK = 24, 24, 24
+BLACK = 0, 0, 0
 BRIGHT_BLACK = 96, 96, 96
 RED = 192, 109, 68
 BRIGHT_RED = 222, 124, 76
@@ -27,7 +27,7 @@ BRIGHT_WHITE = 255, 255, 255
 
 
 def hex_color(r, g, b):
-    return f"#{r:x}{g:x}{b:x}"
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 def alacritty():
